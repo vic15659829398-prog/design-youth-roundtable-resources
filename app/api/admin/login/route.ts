@@ -1,0 +1,4 @@
+import { NextResponse } from "next/server";
+import { signIn } from "@/lib/supabase-rest";
+export async function POST(req:Request){const {email,password}=await req.json() as {email?:string,password?:string};const r=await signIn(String(email||""),String(password||""));if(!r.ok)return NextResponse.json({error:"账号或密码不正确"},{status:401});const data=await r.json() as {access_token:string,user?:{email?:string}};const allowed=(process.env.ADMIN_EMAILS||"").split(",").map(x=>x.trim().toLowerCase());if(!allowed.includes(String(data.user?.email||"").toLowerCase()))return NextResponse.json({error:"该账号没有后台权限"},{status:403});const out=NextResponse.json({ok:true});out.cookies.set("rt_admin",data.access_token,{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",maxAge:3600,path:"/"});return out}
+

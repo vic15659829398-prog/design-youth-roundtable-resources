@@ -1,0 +1,7 @@
+import { NextResponse } from "next/server";
+import { getDb } from "@/db";
+import { submissions } from "@/db/schema";
+const allowed=new Set(["designer","supplier"]);
+export async function POST(req:Request,{params}:{params:Promise<{kind:string}>}){try{const {kind}=await params;if(!allowed.has(kind))return NextResponse.json({error:"无效类型"},{status:404});const raw=await req.json() as Record<string,unknown> & {company_name?:string;brand_name?:string;contact_name?:string;phone?:string;wechat?:string;province?:string;city?:string;privacy_agreed?:boolean};if(!raw.company_name?.trim()||!raw.contact_name?.trim()||!raw.phone?.trim()||!raw.city?.trim())return NextResponse.json({error:"请完整填写公司、填表人、手机号和城市"},{status:400});if(raw.privacy_agreed!==true)return NextResponse.json({error:"请先同意信息收集与使用说明"},{status:400});const consentAt=new Date().toISOString();const submissionToken=crypto.randomUUID();await getDb().insert(submissions).values({submissionToken,kind:kind as "designer"|"supplier",companyName:raw.company_name.trim(),brandName:raw.brand_name?.trim()||null,contactName:raw.contact_name.trim(),phone:raw.phone.trim(),wechat:raw.wechat?.trim()||null,province:raw.province?.trim()||null,city:raw.city.trim(),payload:JSON.stringify(raw),consentVersion:process.env.PRIVACY_POLICY_VERSION||"1.0",consentAt});return NextResponse.json({ok:true,submissionToken},{status:201});}catch(e){console.error(e);return NextResponse.json({error:"暂时无法保存，请稍后重试"},{status:503})}}
+
+

@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../vendor/shadcn-tailwind-4.13.0.css";
+:root { --background:#f7f7f5; --foreground:#171717; --primary:#171717; --primary-foreground:#fff; --secondary:#ffd400; --border:#deded9; --input:#d4d4cf; --ring:#171717; --radius:0.25rem; }
+* { box-sizing:border-box; }
+html { background:var(--background); }
+body { margin:0; background:var(--background); color:var(--foreground); font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif; }
+button,a,input,textarea,select { letter-spacing:0; }
+button,a { -webkit-tap-highlight-color:transparent; }
+input,textarea,select { font-size:16px; }
+::selection { background:#ffd400; color:#171717; }

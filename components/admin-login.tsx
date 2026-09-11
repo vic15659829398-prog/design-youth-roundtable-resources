@@ -1,0 +1,9 @@
+"use client";
+import { useState } from "react";
+import { Loader2, LockKeyhole } from "lucide-react";
+import Image from "next/image";
+export default function AdminLogin(){const [busy,setBusy]=useState(false),[error,setError]=useState("");async function go(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");const form=new FormData(e.currentTarget);const r=await fetch("/api/admin/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(Object.fromEntries(form))});const d=await r.json() as {error?:string};if(r.ok)location.href="/admin/dashboard";else{setError(d.error||"登录失败");setBusy(false)}}return <form onSubmit={go} className="w-full max-w-md border border-black/10 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,.06)] sm:p-10"><div className="flex items-center justify-between"><Image src="/roundtable-logo.png" alt="设计青年圆桌派" width={1750} height={512} unoptimized className="h-auto w-[180px] object-contain"/><span className="grid h-12 w-12 place-items-center bg-[#ffd400]"><LockKeyhole size={21}/></span></div><h1 className="mt-7 text-3xl font-black">内部资源管理</h1><p className="mt-2 text-sm text-black/45">仅限圆桌派授权管理员</p><label className="mt-8 block text-sm font-bold">邮箱<input name="email" type="email" required className="mt-2 w-full border border-black/15 px-4 py-3.5 outline-none focus:border-black"/></label><label className="mt-4 block text-sm font-bold">密码<input name="password" type="password" required className="mt-2 w-full border border-black/15 px-4 py-3.5 outline-none focus:border-black"/></label>{error&&<p className="mt-4 text-sm font-bold text-red-600">{error}</p>}<button disabled={busy} className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 bg-black font-bold text-white disabled:opacity-50">{busy&&<Loader2 className="animate-spin" size={18}/>}登录</button></form>}
+
+
+
+
